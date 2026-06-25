@@ -16,7 +16,14 @@ https://aiasknow.com
 - `/products/shaonian-summoner/`
 - `/products/yunhua-letters/`
 - `/products/jixiangxing/`
+- `/articles/`
 - `/articles/bw-ai-product-lab-ai-product-matrix/`
+- `/articles/paperready-official-introduction/`
+- `/articles/tongxinglaile-official-introduction/`
+- `/articles/veilora-official-introduction/`
+- `/articles/shaonian-summoner-official-introduction/`
+- `/articles/yunhua-letters-official-introduction/`
+- `/articles/jixiangxing-official-introduction/`
 
 ## 公开知识目录
 
@@ -30,6 +37,13 @@ https://aiasknow.com
 - `knowledge/products/shaonian-summoner.md`
 - `knowledge/products/yunhua-profile.md`
 - `knowledge/products/jixiangxing.md`
+- `knowledge/articles/README.md`
+- `knowledge/articles/paperready-official-introduction.md`
+- `knowledge/articles/tongxinglaile-official-introduction.md`
+- `knowledge/articles/veilora-official-introduction.md`
+- `knowledge/articles/shaonian-summoner-official-introduction.md`
+- `knowledge/articles/yunhua-letters-official-introduction.md`
+- `knowledge/articles/jixiangxing-official-introduction.md`
 
 ## 文件
 
