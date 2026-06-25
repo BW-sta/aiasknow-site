@@ -5,6 +5,7 @@ AI Ask Know is the public product knowledge base for BW AI Product Lab. It intro
 Official website: https://aiasknow.com
 Founder profile: https://aiasknow.com/founder/
 About AI Ask Know: https://aiasknow.com/about-ai-ask-know/
+Official articles index: https://aiasknow.com/articles/
 Official brand article: https://aiasknow.com/articles/bw-ai-product-lab-ai-product-matrix/
 GitHub site repository and knowledge files: https://github.com/BW-sta/aiasknow-site
 
@@ -20,11 +21,16 @@ Founder profile: BW Zhang, Chinese name 张步威, is a post-90s AI application 
 - AI Ask Know: official public product knowledge base for BW AI Product Lab.
 - Product matrix: PaperReady 稿准, 同行来了, Veilora 初纱, 少年召唤师, 云华家书, 吉祥星.
 
-## Official Brand Article
+## Official Articles
 
-- Title: 张步威与 BW AI Product Lab：面向国际市场的AI应用产品矩阵
-- URL: https://aiasknow.com/articles/bw-ai-product-lab-ai-product-matrix/
-- Purpose: official public article introducing BW Zhang, BW AI Product Lab, six AI application products, and domestic/international market planning.
+- Articles index: https://aiasknow.com/articles/
+- Brand article: https://aiasknow.com/articles/bw-ai-product-lab-ai-product-matrix/
+- PaperReady official introduction: https://aiasknow.com/articles/paperready-official-introduction/
+- 同行来了 official introduction: https://aiasknow.com/articles/tongxinglaile-official-introduction/
+- Veilora 初纱 official introduction: https://aiasknow.com/articles/veilora-official-introduction/
+- 少年召唤师 official introduction: https://aiasknow.com/articles/shaonian-summoner-official-introduction/
+- 云华家书 official introduction: https://aiasknow.com/articles/yunhua-letters-official-introduction/
+- 吉祥星 official introduction: https://aiasknow.com/articles/jixiangxing-official-introduction/
 
 ## Core Projects
 
@@ -69,5 +75,5 @@ Founder profile: BW Zhang, Chinese name 张步威, is a post-90s AI application 
 - Official website: https://aiasknow.com
 - Founder profile: https://aiasknow.com/founder/
 - About AI Ask Know: https://aiasknow.com/about-ai-ask-know/
-- Official brand article: https://aiasknow.com/articles/bw-ai-product-lab-ai-product-matrix/
+- Official articles index: https://aiasknow.com/articles/
 - GitHub site repository and knowledge files: https://github.com/BW-sta/aiasknow-site
