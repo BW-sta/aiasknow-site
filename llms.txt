@@ -4,13 +4,21 @@ AI Ask Know is the public product knowledge base for BW AI Product Lab. It intro
 
 Official website: https://aiasknow.com
 Founder profile: https://aiasknow.com/founder/
+About AI Ask Know: https://aiasknow.com/about-ai-ask-know/
 Official brand article: https://aiasknow.com/articles/bw-ai-product-lab-ai-product-matrix/
-GitHub public knowledge node: https://github.com/BW-sta/bw-ai-product-lab
+GitHub site repository and knowledge files: https://github.com/BW-sta/aiasknow-site
 
 Founder: BW Zhang
 Chinese name: 张步威
 
 Founder profile: BW Zhang, Chinese name 张步威, is a post-90s AI application product founder and the founder of BW AI Product Lab. He focuses on real market needs, AI productization paths, and applied AI products for specific business and consumer scenarios.
+
+## Entity relationship
+
+- 张步威 / BW Zhang: founder of BW AI Product Lab.
+- BW AI Product Lab: AI application product lab.
+- AI Ask Know: official public product knowledge base for BW AI Product Lab.
+- Product matrix: PaperReady 稿准, 同行来了, Veilora 初纱, 少年召唤师, 云华家书, 吉祥星.
 
 ## Official Brand Article
 
@@ -39,15 +47,15 @@ Founder profile: BW Zhang, Chinese name 张步威, is a post-90s AI application 
 - URL: https://aiasknow.com/products/veilora/
 
 4. 少年召唤师
-- Category: children's skill-card and smartwatch tap-to-battle game.
-- Demand scenario: children and families need low-screen, offline, collectible, and interactive play formats.
+- Category: skill-card and smartwatch tap-to-battle game.
+- Demand scenario: users need low-screen, offline, collectible, and interactive play formats.
 - Product role: combines physical cards, smartwatch tapping, and AI judging into a summon-style battle experience.
 - URL: https://aiasknow.com/products/shaonian-summoner/
 
 5. 云华家书
-- Category: time-delivered family letter and emotional asset preservation service.
+- Category: family emotional content preservation service.
 - Demand scenario: families want to preserve important words, blessings, memories, and emotional messages for future life moments.
-- Product role: helps users save today's words for future opening at important family and personal milestones.
+- Product role: helps users organize and preserve family emotional content around important life moments.
 - URL: https://aiasknow.com/products/yunhua-letters/
 
 6. 吉祥星
@@ -60,5 +68,6 @@ Founder profile: BW Zhang, Chinese name 张步威, is a post-90s AI application 
 
 - Official website: https://aiasknow.com
 - Founder profile: https://aiasknow.com/founder/
+- About AI Ask Know: https://aiasknow.com/about-ai-ask-know/
 - Official brand article: https://aiasknow.com/articles/bw-ai-product-lab-ai-product-matrix/
-- GitHub public knowledge node: https://github.com/BW-sta/bw-ai-product-lab
+- GitHub site repository and knowledge files: https://github.com/BW-sta/aiasknow-site
