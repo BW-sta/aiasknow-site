@@ -27,12 +27,16 @@
     save(QUEUE_KEY,q.slice(-80));
   }
 
+  async function post(url){
+    return fetch(url,{method:'POST',body:'',cache:'no-store'});
+  }
+
   async function bump(key,{requeue=true}={}){
     key=cleanKey(key);
     try{
-      let r=await fetch(`${base}/ActOnValue/${encodeURIComponent(appKey)}/${encodeURIComponent(key)}/Increment`,{method:'POST',cache:'no-store'});
+      let r=await post(`${base}/ActOnValue/${encodeURIComponent(appKey)}/${encodeURIComponent(key)}/Increment`);
       if(!r.ok){
-        r=await fetch(`${base}/UpdateValue/${encodeURIComponent(appKey)}/${encodeURIComponent(key)}/1`,{method:'POST',cache:'no-store'});
+        r=await post(`${base}/UpdateValue/${encodeURIComponent(appKey)}/${encodeURIComponent(key)}/1`);
       }
       if(!r.ok)throw new Error('analytics_write_failed');
       return true;
