@@ -37,7 +37,7 @@ jobs:
             CURRENT="$(curl -fsSL --retry 2 --retry-delay 1 "$BASE/GetValue/$APP_KEY/$KEY" || true)"
             CLEAN="$(printf '%s' "$CURRENT" | tr -d '"\r\n ')"
             if [ -z "$CLEAN" ] || [ "$CLEAN" = "null" ]; then
-              curl -fsSL --retry 2 --retry-delay 1 -X POST "$BASE/UpdateValue/$APP_KEY/$KEY/0" >/dev/null
+              curl -fsSL --retry 2 --retry-delay 1 -X POST -d '' "$BASE/UpdateValue/$APP_KEY/$KEY/0" >/dev/null
             fi
           done
 
