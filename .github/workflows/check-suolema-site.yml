@@ -14,11 +14,13 @@ jobs:
         shell: bash
         run: |
           set +e
-          echo '=== DNS aiasknow.com ==='
-          getent hosts aiasknow.com || true
-          echo '=== HTTPS root ==='
-          curl -IL --max-time 20 https://aiasknow.com/ || true
-          echo '=== HTTPS suolema ==='
-          curl -IL --max-time 20 'https://aiasknow.com/suolema/?src=pyq' || true
-          echo '=== GitHub Pages default ==='
-          curl -IL --max-time 20 'https://bw-sta.github.io/aiasknow-site/suolema/' || true
+          echo '=== Vercel current ==='
+          curl -IL --max-time 20 'https://www.aiasknow.com/suolema/?src=pyq' || true
+          echo '=== jsDelivr page ==='
+          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema/index.html?src=pyq' || true
+          echo '=== jsDelivr analytics config ==='
+          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema/analytics-config.js' || true
+          echo '=== jsDelivr analytics script ==='
+          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema/analytics.js' || true
+          echo '=== jsDelivr admin ==='
+          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema-admin/index.html' || true
