@@ -1,0 +1,19 @@
+{
+  "name": "锁了吗",
+  "short_name": "锁了吗",
+  "description": "一次确认，然后离开。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3e6d6",
+  "theme_color": "#f3e6d6",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
