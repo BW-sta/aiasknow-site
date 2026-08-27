@@ -1,0 +1,37 @@
+name: Initialize Suolema Analytics
+
+on:
+  push:
+    paths:
+      - '.github/workflows/init-suolema-analytics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize analytics key
+        shell: bash
+        run: |
+          set -euo pipefail
+          APP_KEY="$(curl -fsSL --retry 3 --retry-delay 2 https://keyvalue.immanuel.co/api/KeyVal/GetAppKey | tr -d '"\r\n ')"
+          test -n "$APP_KEY"
+          cat > suolema/analytics-config.js <<EOF
+          window.SUOLEMA_ANALYTICS = {
+            base: "https://keyvalue.immanuel.co/api/KeyVal",
+            appKey: "$APP_KEY"
+          };
+          EOF
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add suolema/analytics-config.js
+          if git diff --cached --quiet; then
+            echo "No analytics config changes"
+            exit 0
+          fi
+          git commit -m "Initialize Suolema analytics"
+          git push
