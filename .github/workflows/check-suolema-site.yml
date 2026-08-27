@@ -1,0 +1,24 @@
+name: Check Suolema Site
+
+on:
+  push:
+    paths:
+      - '.github/workflows/check-suolema-site.yml'
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Diagnose public URLs
+        shell: bash
+        run: |
+          set +e
+          echo '=== DNS aiasknow.com ==='
+          getent hosts aiasknow.com || true
+          echo '=== HTTPS root ==='
+          curl -IL --max-time 20 https://aiasknow.com/ || true
+          echo '=== HTTPS suolema ==='
+          curl -IL --max-time 20 'https://aiasknow.com/suolema/?src=pyq' || true
+          echo '=== GitHub Pages default ==='
+          curl -IL --max-time 20 'https://bw-sta.github.io/aiasknow-site/suolema/' || true
