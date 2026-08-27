@@ -1,0 +1,47 @@
+name: Deploy Suolema to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'suolema/**'
+      - 'suolema-admin/**'
+      - '.github/workflows/deploy-suolema-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Prepare site
+        run: |
+          mkdir -p _site
+          cp -R suolema _site/suolema
+          cp -R suolema-admin _site/suolema-admin
+          touch _site/.nojekyll
+          cat > _site/index.html <<'EOF'
+          <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>锁了吗</title><body><script>location.replace('./suolema/?src=pyq')</script><a href="./suolema/?src=pyq">打开锁了吗</a></body></html>
+          EOF
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
