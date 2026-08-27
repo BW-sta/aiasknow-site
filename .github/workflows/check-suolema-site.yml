@@ -13,14 +13,8 @@ jobs:
       - name: Diagnose public URLs
         shell: bash
         run: |
-          set +e
-          echo '=== Vercel current ==='
-          curl -IL --max-time 20 'https://www.aiasknow.com/suolema/?src=pyq' || true
-          echo '=== jsDelivr page ==='
-          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema/index.html?src=pyq' || true
-          echo '=== jsDelivr analytics config ==='
-          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema/analytics-config.js' || true
-          echo '=== jsDelivr analytics script ==='
-          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema/analytics.js' || true
-          echo '=== jsDelivr admin ==='
-          curl -IL --max-time 20 'https://cdn.jsdelivr.net/gh/BW-sta/aiasknow-site@main/suolema-admin/index.html' || true
+          set -e
+          echo '=== GitHub Pages product ==='
+          curl -fsSIL --max-time 20 'https://bw-sta.github.io/aiasknow-site/suolema/?src=pyq'
+          echo '=== GitHub Pages admin ==='
+          curl -fsSIL --max-time 20 'https://bw-sta.github.io/aiasknow-site/suolema-admin/'
