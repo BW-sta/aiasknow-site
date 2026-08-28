@@ -5,7 +5,6 @@ on:
     branches: [main]
     paths:
       - 'suolema/**'
-      - 'suolema-admin/**'
       - '.github/workflows/deploy-suolema-pages.yml'
   workflow_dispatch:
 
@@ -31,7 +30,6 @@ jobs:
         run: |
           mkdir -p _site
           cp -R suolema _site/suolema
-          cp -R suolema-admin _site/suolema-admin
           touch _site/.nojekyll
           cat > _site/index.html <<'EOF'
           <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>锁了吗</title><body><script>location.replace('./suolema/?src=pyq')</script><a href="./suolema/?src=pyq">打开锁了吗</a></body></html>
