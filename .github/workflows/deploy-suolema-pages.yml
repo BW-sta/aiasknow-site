@@ -1,10 +1,11 @@
-name: Deploy Suolema to GitHub Pages
+name: Deploy Site to GitHub Pages
 
 on:
   push:
     branches: [main]
     paths:
       - 'suolema/**'
+      - 'agentport/**'
       - '.github/workflows/deploy-suolema-pages.yml'
   workflow_dispatch:
 
@@ -29,10 +30,11 @@ jobs:
       - name: Prepare site
         run: |
           mkdir -p _site
-          cp -R suolema _site/suolema
+          if [ -d suolema ]; then cp -R suolema _site/suolema; fi
+          if [ -d agentport ]; then cp -R agentport _site/agentport; fi
           touch _site/.nojekyll
           cat > _site/index.html <<'EOF'
-          <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>锁了吗</title><body><script>location.replace('./suolema/?src=pyq')</script><a href="./suolema/?src=pyq">打开锁了吗</a></body></html>
+          <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ask Know</title><body><script>location.replace('./suolema/?src=pyq')</script><a href="./suolema/?src=pyq">打开</a></body></html>
           EOF
       - name: Setup Pages
         uses: actions/configure-pages@v5
