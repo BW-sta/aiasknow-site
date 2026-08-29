@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>AGENTPORT｜让AI替人完成购买</title>
+<meta name="description" content="AGENTPORT 中国投资人交互演示：让AI自己寻找、比较、购买并开通服务。" />
+<style>
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Arial,sans-serif;background:#f5f5f2;color:#151515}.wrap{max-width:1080px;margin:auto;padding:20px}.nav{display:flex;align-items:center;justify-content:space-between;padding:4px 0 18px}.brand{font-weight:900;letter-spacing:.5px}.tag{font-size:12px;color:#666;background:#fff;border:1px solid #ddd;border-radius:999px;padding:7px 10px}.hero{background:#111;color:#fff;border-radius:26px;padding:34px 30px;margin-bottom:18px}.eyebrow{font-size:13px;color:#aaa;margin-bottom:14px}.hero h1{font-size:38px;line-height:1.15;margin:0 0 14px}.hero p{font-size:17px;line-height:1.8;color:#d4d4d4;margin:0;max-width:760px}.hero strong{color:#fff}.compare{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}.compare .box{border:1px solid #383838;border-radius:18px;padding:17px;background:#181818}.compare h3{font-size:14px;margin:0 0 9px}.compare p{font-size:13px;line-height:1.65;color:#aaa}.arrow{font-size:23px;margin-top:8px}.panel{background:#fff;border:1px solid #deded8;border-radius:22px;overflow:hidden;margin-top:18px}.hd{padding:20px;border-bottom:1px solid #ecece7;display:flex;justify-content:space-between;gap:12px;align-items:center}.hd h2{font-size:18px;margin:0}.sub{font-size:12px;color:#777;margin-top:5px}.demo{display:grid;grid-template-columns:1.2fr .8fr}.main{padding:20px;min-height:520px}.side{padding:20px;background:#fafaf7;border-left:1px solid #ecece7}.bubble{max-width:88%;padding:13px 15px;border-radius:17px;font-size:14px;line-height:1.7;margin-bottom:12px}.me{margin-left:auto;background:#111;color:white;border-bottom-right-radius:5px}.ai{background:#f3f3ee;border:1px solid #e0e0da;border-bottom-left-radius:5px}.note{font-size:12px;color:#777;text-align:center;margin:12px 0}.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px 16px;background:#111;color:#fff;font-size:15px;font-weight:800;cursor:pointer;margin-top:14px}.btn:disabled{opacity:.35;cursor:default}.ghost{background:#efefea;color:#222}.cards{display:grid;gap:10px;margin-top:10px}.card{border:1px solid #ddd;border-radius:15px;padding:13px;background:#fff}.card.pick{border:2px solid #111}.row{display:flex;justify-content:space-between;gap:10px;align-items:center}.name{font-weight:800}.price{font-weight:900}.meta{font-size:12px;line-height:1.55;color:#777;margin-top:6px}.reason{margin-top:10px;background:#f0f5ff;border-radius:12px;padding:11px;font-size:12px;line-height:1.65;color:#314b7d}.step{display:flex;gap:10px;padding:11px 0;border-bottom:1px solid #e7e7e2}.dot{width:25px;height:25px;border-radius:8px;background:#e9e9e3;display:grid;place-items:center;font-size:11px;font-weight:800;flex:none}.step.on .dot,.step.done .dot{background:#111;color:#fff}.st{font-size:13px;font-weight:800}.sd{font-size:11px;color:#888;margin-top:3px}.metric{margin-top:18px;background:#111;color:#fff;border-radius:16px;padding:16px}.metric small{color:#aaa}.big{font-size:27px;font-weight:900;margin:5px 0}.invest{display:none;padding:24px;background:#fff}.invest.show{display:block}.invest h2{font-size:28px;margin:0 0 12px}.invest .lead{font-size:16px;line-height:1.8;color:#555;max-width:760px}.logic{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}.logic .l{border:1px solid #deded8;border-radius:17px;padding:16px}.logic b{display:block;margin-bottom:6px}.logic span{font-size:13px;color:#666;line-height:1.6}.quote{margin-top:18px;border-radius:18px;background:#111;color:#fff;padding:22px;font-size:21px;line-height:1.5;font-weight:900}.money{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.money>div{background:#f7f7f3;border-radius:16px;padding:16px}.money b{font-size:20px}.money small{display:block;color:#777;margin-top:6px;line-height:1.5}.merchant{margin-top:16px;border:1px solid #deded8;border-radius:18px;padding:18px}.merchant h3{margin:0 0 12px}.kv{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid #eee;font-size:13px}.ok{color:#167545;font-weight:800}.footer{text-align:center;color:#999;font-size:11px;padding:22px 0}.pulse{animation:pulse .6s ease}@keyframes pulse{50%{transform:scale(1.02)}}
+@media(max-width:760px){.wrap{padding:12px}.hero{padding:25px 20px;border-radius:22px}.hero h1{font-size:30px}.hero p{font-size:15px}.compare{grid-template-columns:1fr}.demo{grid-template-columns:1fr}.side{border-left:0;border-top:1px solid #ecece7}.main{min-height:470px}.logic{grid-template-columns:1fr}.money{grid-template-columns:1fr}.invest h2{font-size:24px}.quote{font-size:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="nav"><div class="brand">AGENTPORT <span style="font-weight:500;color:#888">｜AI商业入口</span></div><div class="tag">投资人演示版</div></div>
+
+  <section class="hero">
+    <div class="eyebrow">先不要想技术，只想一件事</div>
+    <h1>以后买东西，可能不需要“自己逛”。</h1>
+    <p>今天，一家公司想买一个软件服务，要让员工去<strong>搜索、比较、注册、付款、开通</strong>。未来，老板只需要告诉AI一句话：<strong>“帮我买一个合适的。”</strong></p>
+    <div class="compare">
+      <div class="box"><h3>今天</h3><p>人去搜索 → 打开很多网站 → 比价格 → 注册 → 付款 → 开通</p><div class="arrow">😵</div></div>
+      <div class="box"><h3>未来</h3><p>人说一句话 → AI寻找 → AI比较 → 人批准 → AI完成购买</p><div class="arrow">→ AI替你办完</div></div>
+    </div>
+  </section>
+
+  <section class="panel" id="demo">
+    <div class="hd"><div><h2>亲手体验一笔“AI采购”</h2><div class="sub">场景：一家20人的公司，需要购买发票识别服务</div></div><div class="tag">约30秒</div></div>
+    <div class="demo">
+      <main class="main" id="chat">
+        <div class="bubble me">帮公司找一个发票识别工具。每月预算不超过200元，准确率要高，最好今天就能用。</div>
+        <div class="note">现在假设这是你的公司AI助手</div>
+        <button class="btn" id="go">让AI去办</button>
+      </main>
+      <aside class="side">
+        <div class="step on" data-s="0"><div class="dot">1</div><div><div class="st">听懂你要什么</div><div class="sd">预算、用途、优先级</div></div></div>
+        <div class="step" data-s="1"><div class="dot">2</div><div><div class="st">替你找商家</div><div class="sd">直接读取可购买的商品信息</div></div></div>
+        <div class="step" data-s="2"><div class="dot">3</div><div><div class="st">替你比较</div><div class="sd">价格、效果、服务</div></div></div>
+        <div class="step" data-s="3"><div class="dot">4</div><div><div class="st">请你批准</div><div class="sd">钱还是由你控制</div></div></div>
+        <div class="step" data-s="4"><div class="dot">5</div><div><div class="st">付款并开通</div><div class="sd">购买结果自动交付</div></div></div>
+        <div class="metric"><small>本次AI完成的采购</small><div class="big" id="amount">¥0</div><small id="mt">还没有产生交易</small></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="panel invest" id="invest">
+    <h2>你刚刚看到的，不是“一个会买软件的AI”。</h2>
+    <p class="lead">真正要做的是：让任何商家都可以把自己的商品和服务变成“AI看得懂、AI能比较、AI能直接购买”的形式。我们站在AI与商业世界之间，每完成一笔交易，就有机会收取服务费。</p>
+    <div class="logic">
+      <div class="l"><b>① 商家接入</b><span>把价格、库存、服务、退款规则等开放给AI。</span></div>
+      <div class="l"><b>② AI替人购买</b><span>AI根据人的要求自动寻找、比较、下单。</span></div>
+      <div class="l"><b>③ 平台从交易赚钱</b><span>不自己卖商品，赚每笔AI交易的基础设施服务费。</span></div>
+    </div>
+    <div class="quote">淘宝让“人”可以在网上买东西。<br>AGENTPORT 想解决的是：让“AI”也可以买东西。</div>
+    <div class="money">
+      <div><b>不是卖OCR</b><small>OCR只是为了让你30秒看懂第一笔交易。以后可以是软件、数据、云服务、差旅、采购甚至实体商品。</small></div>
+      <div><b>核心资产是交易网络</b><small>接入的商家越多，AI越愿意来买；AI买得越多，商家越愿意接入。</small></div>
+    </div>
+    <div class="merchant">
+      <h3>从商家这一边看，也非常简单</h3>
+      <div class="kv"><span>商品</span><b>票识通｜企业版</b></div>
+      <div class="kv"><span>售价</span><b>¥168 / 月</b></div>
+      <div class="kv"><span>是否允许AI直接购买</span><b class="ok">已开启</b></div>
+      <div class="kv"><span>AI能否读取价格与服务规则</span><b class="ok">可以</b></div>
+      <div class="kv"><span>成交后</span><b>自动开通</b></div>
+    </div>
+  </section>
+
+  <div class="footer">概念交互演示｜所有品牌、价格与交易均为模拟，不发生真实扣款</div>
+</div>
+<script>
+const chat=document.getElementById('chat'),go=document.getElementById('go'),amount=document.getElementById('amount'),mt=document.getElementById('mt'),invest=document.getElementById('invest');
+let stage=0;
+function steps(n){document.querySelectorAll('.step').forEach((e,i)=>{e.classList.remove('on','done');if(i<n)e.classList.add('done');if(i===n)e.classList.add('on')})}
+function bubble(html,cls='ai'){const d=document.createElement('div');d.className='bubble '+cls+' pulse';d.innerHTML=html;chat.insertBefore(d,go);d.scrollIntoView({behavior:'smooth',block:'center'});return d}
+function lock(t){go.disabled=true;go.textContent=t}
+function unlock(t){go.disabled=false;go.textContent=t}
+function wait(fn){lock('AI正在处理…');setTimeout(fn,650)}
+go.addEventListener('click',()=>{
+ if(stage===0){wait(()=>{bubble('明白。你的要求是：<b>每月不超过200元、准确率优先、今天能用。</b> 我现在去找。');steps(1);stage=1;unlock('看看AI找到了什么')});return}
+ if(stage===1){wait(()=>{bubble('我找到了3个可以直接购买的服务：<div class="cards"><div class="card"><div class="row"><span class="name">快识</span><span class="price">¥99/月</span></div><div class="meta">准确率96.8%｜基础识别｜今天可用</div></div><div class="card pick"><div class="row"><span class="name">票识通</span><span class="price">¥168/月</span></div><div class="meta">准确率98.7%｜发票字段校验｜今天可用</div></div><div class="card"><div class="row"><span class="name">智票云</span><span class="price">¥198/月</span></div><div class="meta">准确率98.9%｜含异常人工复核｜今天可用</div></div></div>');steps(2);stage=2;unlock('让AI替我选')});return}
+ if(stage===2){wait(()=>{bubble('我建议买 <b>票识通 ¥168/月</b>。<div class="reason">理由很简单：它只比最贵的方案少0.2%准确率，但便宜30元，而且已经包含发票字段校验。对你这家公司更划算。</div>');steps(3);stage=3;unlock('继续')});return}
+ if(stage===3){wait(()=>{bubble('这笔钱超过了你设置的 <b>“100元以内AI可以自己买”</b> 的额度，所以我不会擅自付款。<br><br><b>是否同意花 ¥168 开通票识通？</b>');go.textContent='同意购买 ¥168';go.disabled=false;steps(3);stage=4});return}
+ if(stage===4){wait(()=>{bubble('<b style="color:#167545">购买完成。</b><br>¥168 已支付，服务已经自动开通，公司现在就可以使用。<br><br>你没有搜索，没有注册，没有比价，也没有自己去开通。');amount.textContent='¥168';mt.textContent='AI已完成寻找、比较、购买和开通';steps(5);stage=5;go.textContent='看看这个生意到底是什么';go.disabled=false});return}
+ if(stage===5){invest.classList.add('show');invest.scrollIntoView({behavior:'smooth',block:'start'});go.disabled=true;go.textContent='演示完成'}
+});
+</script>
+</body>
+</html>
