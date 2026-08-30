@@ -96,7 +96,7 @@ jobs:
           echo "Public source smoke test failed"
           exit 1
 
-      - name: Browser JavaScript smoke test - ONE-01
+      - name: Browser WebGL execution smoke test - ONE-01
         shell: bash
         run: |
           set -euo pipefail
@@ -106,7 +106,8 @@ jobs:
             echo "No Chrome/Chromium found on runner"
             exit 1
           fi
-          DOM="$($CHROME --headless=new --no-sandbox --virtual-time-budget=3000 --dump-dom "$URL" 2>/tmp/one01-browser.err || true)"
+          DOM="$($CHROME --headless=new --no-sandbox --enable-webgl --ignore-gpu-blocklist --enable-unsafe-swiftshader --virtual-time-budget=4000 --dump-dom "$URL" 2>/tmp/one01-browser.err || true)"
           printf '%s' "$DOM" | grep -q 'id="gl"' || { echo "Final canvas DOM not found"; cat /tmp/one01-browser.err; exit 1; }
           printf '%s' "$DOM" | grep -q 'data-one01-js="1"' || { echo "JavaScript execution marker not found"; cat /tmp/one01-browser.err; exit 1; }
-          echo "ONE-01 public page loaded and JavaScript executed in a real browser"
+          printf '%s' "$DOM" | grep -q 'data-ready="1"' || { echo "ONE-01 WebGL ready state not reached"; cat /tmp/one01-browser.err; exit 1; }
+          echo "ONE-01 public page loaded, WebGL initialized, and render loop reached ready state"
