@@ -65,3 +65,17 @@ jobs:
           done
           echo "Public smoke test failed"
           exit 1
+      - name: Browser execution smoke test - ONE-01
+        shell: bash
+        run: |
+          URL="https://bw-sta.github.io/aiasknow-site/labs/one01/"
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
+          if [ -z "$CHROME" ]; then
+            echo "No Chrome/Chromium found on runner"
+            exit 1
+          fi
+          echo "Using browser: $CHROME"
+          DOM="$($CHROME --headless=new --no-sandbox --disable-gpu --virtual-time-budget=4000 --dump-dom "$URL" 2>/tmp/one01-browser.err || true)"
+          printf '%s' "$DOM" | grep -q 'id="gl"' || { echo "Final canvas DOM not found"; cat /tmp/one01-browser.err; exit 1; }
+          printf '%s' "$DOM" | grep -q 'ONE-01 · Digital Life' || { echo "Final ONE-01 title not found"; cat /tmp/one01-browser.err; exit 1; }
+          echo "ONE-01 JavaScript executed and final demo DOM rendered"
