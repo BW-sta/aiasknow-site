@@ -49,3 +49,19 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Public smoke test - ONE-01
+        shell: bash
+        run: |
+          URL="https://bw-sta.github.io/aiasknow-site/labs/one01/"
+          echo "Checking $URL"
+          for i in {1..12}; do
+            BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
+            if printf '%s' "$BODY" | grep -q 'ONE-01'; then
+              echo "ONE-01 public URL is live"
+              exit 0
+            fi
+            echo "Attempt $i/12 not ready yet; retrying..."
+            sleep 5
+          done
+          echo "Public smoke test failed"
+          exit 1
