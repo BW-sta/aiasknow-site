@@ -29,7 +29,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Prepare site
+      - name: Prepare and verify site
         shell: bash
         run: |
           set -euo pipefail
@@ -38,34 +38,31 @@ jobs:
           if [ -d agentport ]; then cp -R agentport _site/agentport; fi
           if [ -d labs ]; then cp -R labs _site/labs; fi
 
+          PARTS=_site/labs/one01/source
+          OUT=_site/labs/one01/index.html
+          test -f "$PARTS/000.part"
+          test -f "$PARTS/006.part"
+          cat "$PARTS/000.part" "$PARTS/001.part" "$PARTS/002.part" "$PARTS/003.part" "$PARTS/004.part" "$PARTS/005.part" "$PARTS/006.part" > "$OUT"
+
+          echo "0c0c71954b44a9d7e1015bac10e8ccc9a69192d5be1627e01d9cc1046bc0fc8a  $OUT" | sha256sum -c -
+          grep -q 'id="gl"' "$OUT"
+          grep -q 'ONE-01 · Digital Life' "$OUT"
+          grep -q "document.body.dataset.ready='1'" "$OUT"
+
           python3 - <<'PY'
           from pathlib import Path
-          import base64, gzip, re
-
-          path = Path('_site/labs/one01/index.html')
-          if path.exists():
-              wrapper = path.read_text(encoding='utf-8')
-              m = re.search(r"const p=`([^`]+)`", wrapper)
-              if m:
-                  payload = m.group(1).strip()
-                  payload += '=' * ((4 - len(payload) % 4) % 4)
-                  raw = gzip.decompress(base64.b64decode(payload)).decode('utf-8')
-                  marker = "<script>document.documentElement.dataset.one01Js='1';</script>"
-                  raw = raw.replace('</body>', marker + '</body>')
-                  path.write_text(raw, encoding='utf-8')
-                  print('Decoded ONE-01 standalone HTML:', len(raw), 'bytes')
-              else:
-                  print('ONE-01 is already standalone HTML; no decode needed')
+          p=Path('_site/labs/one01/index.html')
+          s=p.read_text(encoding='utf-8')
+          marker="<script>document.documentElement.dataset.one01Js='1';</script>"
+          s=s.replace('</body>', marker+'</body>')
+          p.write_text(s,encoding='utf-8')
           PY
+          rm -rf "$PARTS"
 
           touch _site/.nojekyll
           cat > _site/index.html <<'EOF'
           <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ask Know</title><body><script>location.replace('./suolema/?src=pyq')</script><a href="./suolema/?src=pyq">打开</a></body></html>
           EOF
-
-          test -s _site/labs/one01/index.html
-          grep -q 'id="gl"' _site/labs/one01/index.html
-          grep -q 'ONE-01 · Digital Life' _site/labs/one01/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -89,7 +86,7 @@ jobs:
           echo "Checking $URL"
           for i in {1..12}; do
             BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
-            if printf '%s' "$BODY" | grep -q 'id="gl"' && printf '%s' "$BODY" | grep -q 'ONE-01 · Digital Life'; then
+            if printf '%s' "$BODY" | grep -q 'id="gl"' && printf '%s' "$BODY" | grep -q 'ONE-01 · Digital Life' && printf '%s' "$BODY" | grep -q 'data-one01-js'; then
               echo "ONE-01 standalone public HTML is live"
               exit 0
             fi
