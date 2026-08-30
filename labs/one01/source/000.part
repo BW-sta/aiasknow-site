@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
+<meta name="theme-color" content="#ece9df" />
+<title>ONE-01 · Digital Life</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#e9e7df;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Segoe UI",sans-serif;touch-action:none;user-select:none;-webkit-user-select:none}
+  #app{position:fixed;inset:0;overflow:hidden;background:
+    radial-gradient(120% 78% at 50% 27%,rgba(255,255,255,.96) 0%,rgba(246,244,237,.92) 34%,rgba(225,229,221,.86) 65%,rgba(211,217,209,.92) 100%)}
+  #gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+  #veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.28),transparent 25%,transparent 75%,rgba(197,204,194,.13));mix-blend-mode:screen}
+  .hint{position:absolute;left:50%;bottom:max(29px,calc(env(safe-area-inset-bottom) + 18px));transform:translateX(-50%);padding:9px 14px;border-radius:18px;background:rgba(255,255,255,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:14px;letter-spacing:.02em;color:rgba(54,60,55,.58);white-space:nowrap;transition:opacity .55s,transform .55s;pointer-events:none;box-shadow:0 7px 25px rgba(76,85,76,.06)}
+  .hint.hide{opacity:0;transform:translateX(-50%) translateY(7px)}
+  #target{position:absolute;width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(68,118,104,.38);box-shadow:0 0 0 7px rgba(91,148,132,.08);transform:translate(-50%,-50%) scale(.25);opacity:0;pointer-events:none;transition:opacity .18s,transform .26s cubic-bezier(.2,.8,.25,1)}
+  #target.show{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  #hudHotspot{position:absolute;left:0;top:0;width:70px;height:70px;z-index:20}
+  #hud{position:absolute;z-index:21;left:12px;right:12px;top:max(12px,env(safe-area-inset-top));padding:12px 13px;border-radius:18px;background:rgba(15,19,17,.90);color:#f1f3ed;display:none;max-height:42%;overflow:auto;box-shadow:0 18px 45px rgba(0,0,0,.24);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);font-size:11px;line-height:1.45;user-select:text;-webkit-user-select:text}
+  #hud.show{display:block}.hudHead{display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:7px}.hudClose{opacity:.65}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap}.state{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}.state div{padding:5px 6px;border-radius:8px;background:rgba(255,255,255,.07)}
+  #fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:35px;color:#37423c;font-size:14px;line-height:1.7}
+  @media(min-width:800px){.hint{font-size:15px;bottom:38px}}
+</style>
+</head>
+<body>
+<div id="app">
+  <canvas id="gl"></canvas>
+  <div id="veil"></div>
+  <div id="target"></div>
+  <div id="hint" class="hint">点一个地方试试</div>
+  <div id="hudHotspot"></div>
+  <div id="hud"><div class="hudHead"><span>ONE-01 · Developer HUD</span><span class="hudClose">关闭</span></div><div id="decision" class="mono">等待交互…</div><div id="state" class="state"></div></div>
+  <div id="fallback">当前浏览器没有启用 WebGL。请使用最新版 Safari、Chrome 或微信内置浏览器打开。</div>
+</div>
+<script>
+(() => {
+'use strict';
+const canvas = document.getElementById('gl');
+const gl = canvas.getContext('webgl', {antialias:true, alpha:true, premultipliedAlpha:false}) || canvas.getContext('experimental-webgl');
+if(!gl){ document.getElementById('fallback').style.display='flex'; return; }
+
+// ---------- tiny math ----------
+const V3=(x=0,y=0,z=0)=>({x,y,z});
+const add=(a,b)=>V3(a.x+b.x,a.y+b.y,a.z+b.z);
+const sub=(a,b)=>V3(a.x-b.x,a.y-b.y,a.z-b.z);
+const mul=(a,s)=>V3(a.x*s,a.y*s,a.z*s);
+const len=a=>Math.hypot(a.x,a.y,a.z);
+const norm=a=>{const l=len(a)||1;return V3(a.x/l,a.y/l,a.z/l)};
+const cross=(a,b)=>V3(a.y*b.z-a.z*b.y,a.z*b.x-a.x*b.z,a.x*b.y-a.y*b.x);
+const dot=(a,b)=>a.x*b.x+a.y*b.y+a.z*b.z;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smooth=t=>t*t*(3-2*t);
+const angleLerp=(a,b,t)=>{let d=((b-a+Math.PI)%(Math.PI*2))-Math.PI;return a+d*t};
+
+function M4(){return new Float32Array([1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1])}
+function mMul(a,b){const o=new F
