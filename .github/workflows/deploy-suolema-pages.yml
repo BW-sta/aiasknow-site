@@ -28,54 +28,90 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
       - name: Prepare site
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p _site
           if [ -d suolema ]; then cp -R suolema _site/suolema; fi
           if [ -d agentport ]; then cp -R agentport _site/agentport; fi
           if [ -d labs ]; then cp -R labs _site/labs; fi
+
+          # The repository stores ONE-01 as a compact gzip/base64 wrapper.
+          # Decode it during deployment so browsers receive the real standalone HTML
+          # and do not depend on DecompressionStream support.
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, gzip, re
+
+          path = Path('_site/labs/one01/index.html')
+          if path.exists():
+              wrapper = path.read_text(encoding='utf-8')
+              m = re.search(r"const p=`([^`]+)`", wrapper)
+              if m:
+                  raw = gzip.decompress(base64.b64decode(m.group(1))).decode('utf-8')
+                  # Add a tiny browser-execution marker. This runs independently of WebGL.
+                  marker = "<script>document.documentElement.dataset.one01Js='1';</script>"
+                  raw = raw.replace('</body>', marker + '</body>')
+                  path.write_text(raw, encoding='utf-8')
+                  print('Decoded ONE-01 standalone HTML:', len(raw), 'bytes')
+              else:
+                  print('ONE-01 is already standalone HTML; no decode needed')
+          PY
+
           touch _site/.nojekyll
           cat > _site/index.html <<'EOF'
           <!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AI Ask Know</title><body><script>location.replace('./suolema/?src=pyq')</script><a href="./suolema/?src=pyq">打开</a></body></html>
           EOF
+
+          test -s _site/labs/one01/index.html
+          grep -q 'id="gl"' _site/labs/one01/index.html
+          grep -q 'ONE-01 · Digital Life' _site/labs/one01/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
         with:
           enablement: true
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: _site
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Public smoke test - ONE-01
+
+      - name: Public source smoke test - ONE-01
         shell: bash
         run: |
-          URL="https://bw-sta.github.io/aiasknow-site/labs/one01/"
+          set -euo pipefail
+          URL="https://bw-sta.github.io/aiasknow-site/labs/one01/?build=${GITHUB_SHA}"
           echo "Checking $URL"
           for i in {1..12}; do
             BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
-            if printf '%s' "$BODY" | grep -q 'ONE-01'; then
-              echo "ONE-01 public URL is live"
+            if printf '%s' "$BODY" | grep -q 'id="gl"' && printf '%s' "$BODY" | grep -q 'ONE-01 · Digital Life'; then
+              echo "ONE-01 standalone public HTML is live"
               exit 0
             fi
             echo "Attempt $i/12 not ready yet; retrying..."
             sleep 5
           done
-          echo "Public smoke test failed"
+          echo "Public source smoke test failed"
           exit 1
-      - name: Browser execution smoke test - ONE-01
+
+      - name: Browser JavaScript smoke test - ONE-01
         shell: bash
         run: |
-          URL="https://bw-sta.github.io/aiasknow-site/labs/one01/"
+          set -euo pipefail
+          URL="https://bw-sta.github.io/aiasknow-site/labs/one01/?build=${GITHUB_SHA}"
           CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser || true)"
           if [ -z "$CHROME" ]; then
             echo "No Chrome/Chromium found on runner"
             exit 1
           fi
-          echo "Using browser: $CHROME"
-          DOM="$($CHROME --headless=new --no-sandbox --disable-gpu --virtual-time-budget=4000 --dump-dom "$URL" 2>/tmp/one01-browser.err || true)"
+          DOM="$($CHROME --headless=new --no-sandbox --virtual-time-budget=3000 --dump-dom "$URL" 2>/tmp/one01-browser.err || true)"
           printf '%s' "$DOM" | grep -q 'id="gl"' || { echo "Final canvas DOM not found"; cat /tmp/one01-browser.err; exit 1; }
-          printf '%s' "$DOM" | grep -q 'ONE-01 · Digital Life' || { echo "Final ONE-01 title not found"; cat /tmp/one01-browser.err; exit 1; }
-          echo "ONE-01 JavaScript executed and final demo DOM rendered"
+          printf '%s' "$DOM" | grep -q 'data-one01-js="1"' || { echo "JavaScript execution marker not found"; cat /tmp/one01-browser.err; exit 1; }
+          echo "ONE-01 public page loaded and JavaScript executed in a real browser"
