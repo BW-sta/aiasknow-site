@@ -86,7 +86,7 @@ jobs:
           echo "Checking $URL"
           for i in {1..12}; do
             BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
-            if printf '%s' "$BODY" | grep -q 'id="gl"' && printf '%s' "$BODY" | grep -q 'ONE-01 · Digital Life' && printf '%s' "$BODY" | grep -q 'data-one01-js'; then
+            if printf '%s' "$BODY" | grep -q 'id="gl"' && printf '%s' "$BODY" | grep -q 'ONE-01 · Digital Life' && printf '%s' "$BODY" | grep -q "dataset.one01Js='1'"; then
               echo "ONE-01 standalone public HTML is live"
               exit 0
             fi
