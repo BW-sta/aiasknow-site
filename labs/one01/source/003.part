@@ -1,0 +1,48 @@
+eye:e,hi}}
+const eyeL=makeEye(-.31),eyeR=makeEye(.31);
+const mouth=part(sphere,C.mouth,.05);mouth.parent=head;mouth.p=V3(0,-.31,.69);mouth.s=V3(.13,.028,.035);
+
+const crown=[];const crownBase=[[-.48,.53,.03,-.38],[-.25,.66,.02,-.18],[0,.73,0,0],[.25,.66,.02,.18],[.48,.53,.03,.38]];
+crownBase.forEach((a,i)=>{const c=part(sphere,C.skinLight,.16);c.parent=head;c.p=V3(a[0],a[1],a[2]);c.s=V3(.12,.38-(Math.abs(i-2)*.035),.12);c.r=V3(0,0,a[3]);c.baseZ=a[3];c.spring=0;c.vel=0;crown.push(c)});
+
+function limb(side){
+ const sx=side==='L'?-1:1;
+ const shoulder=node(root,V3(.60*sx,1.62,0)); shoulder.r.z=-sx*.13;
+ const upper=part(sphere,C.skin,.08); upper.parent=shoulder; upper.p=V3(0,-.31,0); upper.s=V3(.17,.35,.17);
+ const elbow=node(shoulder,V3(0,-.62,0));
+ const lower=part(sphere,C.skin,.08); lower.parent=elbow; lower.p=V3(0,-.27,0); lower.s=V3(.15,.31,.15);
+ const wrist=node(elbow,V3(0,-.55,0));
+ const hand=part(sphere,C.skinLight,.1); hand.parent=wrist; hand.p=V3(0,-.13,.015); hand.s=V3(.22,.23,.18);
+ const fingers=[]; for(let i=0;i<4;i++){const f=part(sphere,C.skinLight,.08);f.parent=wrist;const spread=(i-1.5)*.095;f.p=V3(spread*(side==='L'?-1:1),-.36,.035);f.s=V3(.045,.16,.052);f.r.z=spread*.50*(side==='L'?1:-1);fingers.push(f)}
+ return{shoulder,upper,elbow,lower,wrist,hand,fingers,side};
+}
+const armL=limb('L'),armR=limb('R');
+function leg(side){
+ const sx=side==='L'?-1:1;
+ const hip=node(root,V3(.29*sx,.80,0));
+ const thigh=part(sphere,C.skin,.07); thigh.parent=hip; thigh.p=V3(0,-.25,0); thigh.s=V3(.23,.30,.23);
+ const knee=node(hip,V3(0,-.50,0));
+ const shin=part(sphere,C.skin,.07); shin.parent=knee; shin.p=V3(0,-.21,.015); shin.s=V3(.20,.25,.20);
+ const ankle=node(knee,V3(0,-.43,.025));
+ const foot=part(sphere,C.skinLight,.08); foot.parent=ankle; foot.p=V3(0,-.05,.18); foot.s=V3(.27,.17,.39);
+ return{hip,thigh,knee,shin,ankle,foot,side};
+}
+const legL=leg('L'),legR=leg('R');
+const all=[pelvis,torso,torsoInner,head,cheekL,cheekR,eyeL.eye,eyeL.hi,eyeR.eye,eyeR.hi,mouth,...crown,
+ armL.shoulder,armL.upper,armL.elbow,armL.lower,armL.wrist,armL.hand,...armL.fingers,
+ armR.shoulder,armR.upper,armR.elbow,armR.lower,armR.wrist,armR.hand,...armR.fingers,
+ legL.hip,legL.thigh,legL.knee,legL.shin,legL.ankle,legL.foot,
+ legR.hip,legR.thigh,legR.knee,legR.shin,legR.ankle,legR.foot];
+
+// ---------- behavior state ----------
+const temp={activity:.64,sociability:.56,curiosity:.72,patience:.62,boldness:.48,affection:.59};
+const state={energy:.82,mood:.66,curiosity:.70,attention:.56,trust:.48,boredom:.15,socialNeed:.50,irritation:.02,calm:.72};
+let lastT=performance.now(),action=null,actionId=0,idleSince=performance.now(),lastBehavior='',recent=[],press=null,lastTap={t:0,x:0,y:0},hintHidden=false,blinkT=2+Math.random()*3,blink=0,lookX=0,lookY=0,expr='neutral',exprMix=0,headYaw=0,headPitch=0,headTilt=0,bodyLean=0,rootSpeed=0,lastRootYaw=0,holdGaze=false,nextIdleAt=performance.now()+6500+Math.random()*7000;
+const hint=document.getElementById('hint'),targetEl=document.getElementById('target'),hud=document.getElementById('hud'),decisionEl=document.getElementById('decision'),stateEl=document.getElementById('state');
+function updateHUD(){decisionEl.textContent=`行为: ${lastBehavior||'idle'}\n阶段: ${action?action.phase:'none'}\n人格: activity ${temp.activity.toFixed(2)} · curiosity ${temp.curiosity.toFixed(2)} · patience ${temp.patience.toFixed(2)}`;stateEl.innerHTML=Object.entries(state).map(([k,v])=>`<div>${k}<br><b>${v.toFixed(2)}</b></div>`).join('')}
+function scheduleIdle(){nextIdleAt=performance.now()+5500+Math.random()*8500}
+function hideHint(){if(!hintHidden){hintHidden=true;hint.classList.add('hide')}}
+function worldToScreen(p){const c=transform4(vp,p.x,p.y,p.z,1);if(!c.w)return{x:0,y:0};const nx=c.x/c.w,ny=c.y/c.w;return{x:(nx*.5+.5)*W,y:(1-(ny*.5+.5))*H}}
+function rayGround(clientX,clientY){const rect=canvas.getBoundingClientRect(),nx=((clientX-rect.left)/rect.width)*2-1,ny=1-((clientY-rect.top)/rect.height)*2;let a=transform4(invVP,nx,ny,-1,1),b=transform4(invVP,nx,ny,1,1);a=V3(a.x/a.w,a.y/a.w,a.z/a.w);b=V3(b.x/b.w,b.y/b.w,b.z/b.w);const d=sub(b,a);if(Math.abs(d.y)<1e-5)return null;const t=-a.y/d.y;if(t<0)return null;let p=add(a,mul(d,t));const rr=Math.sqrt((p.x*p.x)/(4.5*4.5)+(p.z*p.z)/(3.65*3.65));if(rr>1){p.x/=rr;p.z/=rr}return p}
+function hitCreature(x,y){const sc=worldToScreen(add(root.p,V3(0,1.55,0)));const r=Math.min(W,H)*.15;return Math.hypot(x-sc.x,y-sc.y)<r}
+function targetPulse(p){const s=worldToScreen(V3(p.x,.03,p.z));targetE
