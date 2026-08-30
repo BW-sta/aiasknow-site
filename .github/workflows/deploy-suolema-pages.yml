@@ -38,9 +38,6 @@ jobs:
           if [ -d agentport ]; then cp -R agentport _site/agentport; fi
           if [ -d labs ]; then cp -R labs _site/labs; fi
 
-          # The repository stores ONE-01 as a compact gzip/base64 wrapper.
-          # Decode it during deployment so browsers receive the real standalone HTML
-          # and do not depend on DecompressionStream support.
           python3 - <<'PY'
           from pathlib import Path
           import base64, gzip, re
@@ -50,8 +47,9 @@ jobs:
               wrapper = path.read_text(encoding='utf-8')
               m = re.search(r"const p=`([^`]+)`", wrapper)
               if m:
-                  raw = gzip.decompress(base64.b64decode(m.group(1))).decode('utf-8')
-                  # Add a tiny browser-execution marker. This runs independently of WebGL.
+                  payload = m.group(1).strip()
+                  payload += '=' * ((4 - len(payload) % 4) % 4)
+                  raw = gzip.decompress(base64.b64decode(payload)).decode('utf-8')
                   marker = "<script>document.documentElement.dataset.one01Js='1';</script>"
                   raw = raw.replace('</body>', marker + '</body>')
                   path.write_text(raw, encoding='utf-8')
