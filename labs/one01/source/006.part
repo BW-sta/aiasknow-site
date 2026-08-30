@@ -1,0 +1,25 @@
+.curiosity?'curious':a.behavior==='dash'?'happy':'soft')}}
+   else if(a.phase==='settle'){const k=Math.exp(-a.t*7)*Math.sin(a.t*17);torso.r.x=.07*k;pelvis.r.z=.025*k;if(a.t>.44){a.phase='react';a.t=0;lookX=0;lastBehavior=a.behavior+' → look_user'}}
+   else if(a.phase==='react'){headYaw=lerp(headYaw,0,.12);if(a.t>.62){action=null;idleSince=performance.now();setExpr('neutral')}}
+ } else if(a.type==='react'){
+   if(a.behavior==='step_back'){const k=smooth(clamp(a.t/.55,0,1));root.p.x-=Math.sin(root.r.y)*dt*.22;root.p.z-=Math.cos(root.r.y)*dt*.22;torso.r.x=-.045;armL.shoulder.r.z=.25;armR.shoulder.r.z=-.25}if(a.behavior==='curious_touch')headTilt=.11;if(a.behavior==='shy'){headTilt=-.10;lookX=-.35}if(a.behavior==='tiny_annoyed'){headTilt=-.03;lookX=.25}if(a.t>a.duration){action=null;lookX=0;setExpr('neutral');idleSince=performance.now()}
+ } else if(a.type==='gaze'){
+   setExpr('listening');lookX=lerp(lookX,0,.15);lookY=lerp(lookY,.08,.15);headPitch=.025;armL.shoulder.r.z=.18;armR.shoulder.r.z=-.18;
+ } else if(a.type==='idleAction'){
+   const k=clamp(a.t/a.duration,0,1);switch(a.behavior){case'look_around':headYaw=Math.sin(k*Math.PI*2)*.22;lookX=Math.sin(k*Math.PI*2)*.42;break;case'shift_weight':pelvis.r.z=Math.sin(k*Math.PI)*.07;root.p.x+=Math.sin(k*Math.PI)*.0006;break;case'inspect_hands':headPitch=.14;lookY=-.35;armL.shoulder.r.z=.38;armR.shoulder.r.z=-.38;armL.shoulder.r.x=-.35;armR.shoulder.r.x=-.35;setExpr('curious');break;case'stretch':armL.shoulder.r.z=.80*Math.sin(k*Math.PI);armR.shoulder.r.z=-.80*Math.sin(k*Math.PI);headPitch=-.06*Math.sin(k*Math.PI);break;case'sit':root.p.y=BASE_Y-.32*Math.sin(Math.min(1,k*1.8)*Math.PI/2);legL.hip.r.x=-.85;legR.hip.r.x=-.85;legL.knee.r.x=1.15;legR.knee.r.x=1.15;break;case'look_user':setExpr('soft');headPitch=.02;lookY=.12;break}if(a.t>a.duration){root.p.y=BASE_Y;action=null;lookX=lookY=0;setExpr('neutral');idleSince=performance.now()}
+ }
+}
+function updateCrown(dt){const yawVel=(root.r.y-lastRootYaw)/Math.max(dt,.001);lastRootYaw=root.r.y;const targetSpring=clamp(-yawVel*.08-rootSpeed*.035,-.18,.18);crown.forEach((c,i)=>{const stiffness=18+i*.7,damping=6.8;c.vel+=(targetSpring-c.spring)*stiffness*dt;c.vel*=Math.exp(-damping*dt);c.spring+=c.vel*dt;c.r.z=c.baseZ+c.spring*(i<2?1:-1)*.58;c.r.x=clamp(rootSpeed*.035,0,.10)+Math.sin(performance.now()/650+i)*.006})}
+function updateState(dt){state.energy=clamp(state.energy+dt*.0022,0,1);state.irritation=clamp(state.irritation-dt*(.007+.010*temp.patience),0,1);state.boredom=clamp(state.boredom+dt*.010,0,1);state.attention=clamp(state.attention-dt*.006,0,1);state.mood=clamp(state.mood+(state.calm-.5)*dt*.0015,0,1);state.calm=clamp(state.calm+(state.irritation>.3?-.012:.004)*dt,0,1);state.socialNeed=clamp(state.socialNeed+dt*.003,0,1);if(!action&&!holdGaze&&performance.now()>nextIdleAt){idleBehavior();scheduleIdle()}}
+
+function render(now){const dt=Math.min(.033,(now-lastT)/1000||.016);lastT=now;const t=now/1000;updateState(dt);updateAction(dt,t);updateExpression(dt);updateBlink(dt);updateCrown(dt);
+ // eye gaze inside head local space
+ const px=clamp(lookX,-.65,.65),py=clamp(lookY,-.5,.5);eyeL.eye.p.x=-.31+px*.035;eyeR.eye.p.x=.31+px*.035;eyeL.eye.p.y=.05+py*.035;eyeR.eye.p.y=.05+py*.035;head.r.y=headYaw;head.r.x=headPitch;head.r.z=headTilt;
+ shadow.p.x=root.p.x;shadow.p.z=root.p.z;shadow.s.x=.68+rootSpeed*.035;shadow.s.z=.42+rootSpeed*.02;shadow.opacity=.13+(.08*(1-clamp((root.p.y-BASE_Y)/.25,0,1)));
+ gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);draw(ground,vp);stones.forEach(s=>draw(s,vp));draw(shadow,vp);worldOf(root);all.forEach(o=>draw(o,vp));
+ requestAnimationFrame(render)}
+setInterval(()=>{if(hud.classList.contains('show'))updateHUD()},350);document.body.dataset.ready='1';updateHUD();requestAnimationFrame(render);
+})();
+</script>
+</body>
+</html>
