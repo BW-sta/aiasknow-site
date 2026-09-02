@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -29,6 +29,34 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
+
+      - name: Persist Lucky Money Choice PWA shell to source
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('lucky-money-choice/index.html')
+          s=p.read_text(encoding='utf-8')
+          pwa_head='''\n<link rel="manifest" href="./manifest.webmanifest"/>\n<link rel="icon" href="./icon.svg" type="image/svg+xml"/>\n<meta name="apple-mobile-web-app-capable" content="yes"/>\n<meta name="apple-mobile-web-app-status-bar-style" content="default"/>\n<meta name="apple-mobile-web-app-title" content="压岁钱你做主"/>\n<meta name="mobile-web-app-capable" content="yes"/>\n'''
+          pwa_script='\n<script src="./pwa.js" defer></script>\n'
+          changed=False
+          if 'manifest.webmanifest' not in s:
+              s=s.replace('</head>', pwa_head+'</head>')
+              changed=True
+          if './pwa.js' not in s:
+              s=s.replace('</body>', pwa_script+'</body>')
+              changed=True
+          if changed:
+              p.write_text(s,encoding='utf-8')
+          PY
+          if ! git diff --quiet -- lucky-money-choice/index.html; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add lucky-money-choice/index.html
+            git commit -m 'Persist PWA shell in Lucky Money Choice source'
+            git push origin main
+          fi
 
       - name: Prepare and verify site
         shell: bash
@@ -68,20 +96,6 @@ jobs:
           test -f _site/lucky-money-choice/icon.svg
           grep -q '压岁钱你做主' _site/lucky-money-choice/index.html
           grep -q '儿童生活模拟器' _site/lucky-money-choice/index.html
-
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('_site/lucky-money-choice/index.html')
-          s=p.read_text(encoding='utf-8')
-          pwa_head='''\n<link rel="manifest" href="./manifest.webmanifest"/>\n<link rel="icon" href="./icon.svg" type="image/svg+xml"/>\n<meta name="apple-mobile-web-app-capable" content="yes"/>\n<meta name="apple-mobile-web-app-status-bar-style" content="default"/>\n<meta name="apple-mobile-web-app-title" content="压岁钱你做主"/>\n<meta name="mobile-web-app-capable" content="yes"/>\n'''
-          pwa_script='\n<script src="./pwa.js" defer></script>\n'
-          if 'manifest.webmanifest' not in s:
-              s=s.replace('</head>', pwa_head+'</head>')
-          if './pwa.js' not in s:
-              s=s.replace('</body>', pwa_script+'</body>')
-          p.write_text(s,encoding='utf-8')
-          PY
-
           grep -q 'manifest.webmanifest' _site/lucky-money-choice/index.html
           grep -q './pwa.js' _site/lucky-money-choice/index.html
           grep -q '"display": "standalone"' _site/lucky-money-choice/manifest.webmanifest
@@ -135,12 +149,15 @@ jobs:
           set -euo pipefail
           BASE="https://aiasknow.com/lucky-money-choice"
           URL="$BASE/?build=${GITHUB_SHA}"
-          for i in {1..12}; do
+          for i in {1..18}; do
             BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
             MANIFEST="$(curl -fsSL --connect-timeout 10 --max-time 20 "$BASE/manifest.webmanifest?build=${GITHUB_SHA}" || true)"
+            PWAJS="$(curl -fsSL --connect-timeout 10 --max-time 20 "$BASE/pwa.js?build=${GITHUB_SHA}" || true)"
             if printf '%s' "$BODY" | grep -q '压岁钱你做主' \
               && printf '%s' "$BODY" | grep -q 'manifest.webmanifest' \
-              && printf '%s' "$MANIFEST" | grep -q '"display": "standalone"'; then
+              && printf '%s' "$BODY" | grep -q './pwa.js' \
+              && printf '%s' "$MANIFEST" | grep -q '"display": "standalone"' \
+              && printf '%s' "$PWAJS" | grep -q 'serviceWorker'; then
               echo "Lucky Money Choice custom-domain PWA is live"
               exit 0
             fi
