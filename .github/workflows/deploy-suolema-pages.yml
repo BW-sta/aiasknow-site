@@ -89,17 +89,30 @@ jobs:
         run: |
           set -euo pipefail
           URL="https://bw-sta.github.io/aiasknow-site/lucky-money-choice/?build=${GITHUB_SHA}"
-          echo "Checking public test page"
           for i in {1..12}; do
             BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
             if printf '%s' "$BODY" | grep -q '压岁钱你做主' && printf '%s' "$BODY" | grep -q '儿童生活模拟器'; then
               echo "Lucky Money Choice public HTML is live"
               exit 0
             fi
-            echo "Attempt $i/12 not ready yet; retrying..."
             sleep 5
           done
-          echo "Lucky Money Choice public smoke test failed"
+          exit 1
+
+      - name: Custom domain smoke test - Lucky Money Choice
+        shell: bash
+        run: |
+          set -euo pipefail
+          URL="https://aiasknow.com/lucky-money-choice/?build=${GITHUB_SHA}"
+          for i in {1..12}; do
+            BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
+            if printf '%s' "$BODY" | grep -q '压岁钱你做主' && printf '%s' "$BODY" | grep -q '儿童生活模拟器'; then
+              echo "Lucky Money Choice custom-domain page is live"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Custom-domain smoke test failed"
           exit 1
 
       - name: Public source smoke test - ONE-01
@@ -107,17 +120,14 @@ jobs:
         run: |
           set -euo pipefail
           URL="https://bw-sta.github.io/aiasknow-site/labs/one01/?build=${GITHUB_SHA}"
-          echo "Checking $URL"
           for i in {1..12}; do
             BODY="$(curl -fsSL --connect-timeout 10 --max-time 20 "$URL" || true)"
             if printf '%s' "$BODY" | grep -q 'id="gl"' && printf '%s' "$BODY" | grep -q 'ONE-01 · Digital Life' && printf '%s' "$BODY" | grep -q "dataset.one01Js='1'"; then
               echo "ONE-01 standalone public HTML is live"
               exit 0
             fi
-            echo "Attempt $i/12 not ready yet; retrying..."
             sleep 5
           done
-          echo "Public source smoke test failed"
           exit 1
 
       - name: Browser WebGL execution smoke test - ONE-01
