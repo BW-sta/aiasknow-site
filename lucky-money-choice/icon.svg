@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#F7EEDC"/>
+  <circle cx="256" cy="232" r="126" fill="#E5523F"/>
+  <rect x="183" y="128" width="146" height="196" rx="28" fill="#F45D48"/>
+  <path d="M205 170h102v116H205z" fill="#E5523F"/>
+  <path d="M222 170h68v116h-68z" fill="#F7C96B"/>
+  <circle cx="256" cy="206" r="24" fill="#FFF9EF"/>
+  <path d="M246 183h20v46h-20zM233 196h46v20h-46z" fill="#E5523F"/>
+  <text x="256" y="405" text-anchor="middle" font-family="Arial, sans-serif" font-size="54" font-weight="700" fill="#2F2A25">你做主</text>
+</svg>
