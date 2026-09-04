@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#F7F3E8">
+<title>老板经营体检 V0.4</title>
+<style>
+:root{--bg:#F7F3E8;--card:#FFFDF8;--text:#1F251F;--muted:#74796F;--line:#E3DDD1;--accent:#2F5E46;--soft:#E5EFE8;--warn:#8C5A2B}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}button,input,textarea{font:inherit}
+.app{max-width:520px;margin:auto;min-height:100dvh;padding:env(safe-area-inset-top) 18px env(safe-area-inset-bottom)}
+.top{height:58px;display:flex;align-items:center;justify-content:space-between}.brand{font-size:14px;font-weight:780}.step,.kicker,.note,.mini{font-size:12px;color:var(--muted)}
+.bar{height:4px;background:#E7E1D5;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:var(--accent);transition:.2s}
+.screen{padding:34px 0 24px}h1{font-size:31px;line-height:1.2;letter-spacing:-.035em;margin:8px 0 22px}
+.grid,.actions,.tags,.summary{display:grid;gap:11px}
+.option{border:1px solid var(--line);background:var(--card);border-radius:18px;padding:17px 18px;text-align:left;font-size:18px;font-weight:700;color:var(--text);display:flex;justify-content:space-between}
+.back{border:0;background:none;color:var(--muted);padding:8px 0 16px}.chev{color:#A3A69E}
+.free{margin-top:20px;border-top:1px solid var(--line);padding-top:18px}.free textarea{width:100%;min-height:88px;border:1px solid var(--line);background:var(--card);border-radius:16px;padding:14px;font-size:16px}.free button{margin-top:9px;width:100%;border:0;border-radius:15px;padding:14px;background:#EAE4D8;font-weight:760}
+.card{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:24px}.label{font-size:13px;color:var(--muted)}.title{font-size:29px;font-weight:830;line-height:1.2;margin-top:8px}.reason{font-size:15px;line-height:1.7;color:#444B44}
+.tags{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}.tag{padding:11px 13px;border-radius:14px;background:var(--soft);color:var(--accent);font-size:14px;font-weight:730}.gray{background:#F0ECE3;color:#5E625C}.warn{background:#F5EBDD;color:var(--warn)}
+.actions{margin-top:17px}.primary,.secondary{border:0;border-radius:16px;padding:16px 18px;font-size:16px;font-weight:780}.primary{background:var(--accent);color:white}.secondary{background:#ECE6DA;color:var(--text)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}.field input{width:100%;border:1px solid var(--line);background:var(--card);border-radius:15px;padding:14px;font-size:17px}
+.daybox{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:15px;margin-top:14px;font-size:13px;line-height:1.6}.summary{margin-top:18px}.summary div{padding:13px 14px;background:#F1EEE6;border-radius:14px;font-size:14px;font-weight:680}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.chip{font-size:12px;padding:7px 9px;border-radius:999px;background:#F0ECE3;color:#62665F}.experiment{margin-top:18px;padding:16px;border-radius:18px;background:#EDF3EE}.experiment b{display:block;font-size:13px;color:var(--accent);margin-bottom:7px}.experiment p{margin:0;font-size:15px;line-height:1.55;font-weight:720}
+</style>
+</head>
+<body>
+<main class="app">
+<div class="top"><div class="brand">老板经营体检 V0.4</div><div id="step" class="step">开始</div></div>
+<div class="bar"><i id="bar"></i></div><section id="screen" class="screen"></section>
+</main>
+<script src="../industry-skill-engine.js"></script>
+<script>
+const screen=document.getElementById('screen'),step=document.getElementById('step'),bar=document.getElementById('bar');
+const state={business:null,symptom:null,secondarySymptom:null,naturalText:'',answers:{},history:[],diagnosis:null};
+const KEY='boss_check_v04_rows';
+let currentSymptoms=[];
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+function progress(n,t){step.textContent=t?`${n} / ${t}`:'开始';bar.style.width=t?`${Math.min(100,n/t*100)}%`:'0%'}
+function opts(title,items,fn,kicker='经营体检'){screen.innerHTML=`${state.history.length?'<button class="back" onclick="back()">← 返回</button>':''}<div class="kicker">${esc(kicker)}</div><h1>${esc(title)}</h1><div class="grid">${items.map((x,i)=>`<button class="option" onclick="${fn}(${i})"><span>${esc(x)}</span><span class="chev">›</span></button>`).join('')}</div>`}
+function start(){Object.assign(state,{business:null,symptom:null,secondarySymptom:null,naturalText:'',answers:{},history:[],diagnosis:null});progress(0,0);window._biz=Object.entries(BossSkill.BUSINESS);opts('你做什么生意？',_biz.map(x=>x[1].label),'pickBusiness')}
+window.pickBusiness=i=>{state.history.push({type:'start'});state.business=_biz[i][0];renderSymptoms()}
+function renderSymptoms(){progress(1,5);currentSymptoms=BossSkill.symptomsFor(state.business);const biz=BossSkill.BUSINESS[state.business].label;screen.innerHTML=`<button class="back" onclick="back()">← 返回</button><div class="kicker">${esc(biz)}</div><h1>最头疼？</h1><div class="grid">${currentSymptoms.map((x,i)=>`<button class="option" onclick="pickSymptom(${i})"><span>${esc(x.label)}</span><span class="chev">›</span></button>`).join('')}</div><div class="free"><div class="mini">一句话说也行</div><textarea id="natural" placeholder="比如：预约的人不少，但体验完很少办卡"></textarea><button onclick="useNatural()">从这里开始</button></div>`}
+window.pickSymptom=i=>{state.history.push({type:'symptom'});state.symptom=currentSymptoms[i].id;state.answers={};state.naturalText='';renderNext()}
+window.useNatural=()=>{const text=document.getElementById('natural').value.trim();if(!text)return;const c=BossSkill.classifyText(text,state.business);state.history.push({type:'symptom'});state.symptom=c.symptom;state.secondarySymptom=c.secondary;state.naturalText=text;state.answers={};renderNext()}
+function renderNext(){const q=BossSkill.nextQuestion(state);if(!q){state.diagnosis=BossSkill.result(state);return renderResult()}const n=Object.keys(state.answers).length;progress(Math.min(4,2+n),5);window._q=q;window._opts=BossSkill.optionsFor(q,state);opts(q.title,_opts,'answerQ',BossSkill.BUSINESS[state.business].label)}
+window.answerQ=i=>{state.history.push({type:'q',id:_q.id});state.answers[_q.id]=_opts[i];renderNext()}
+window.back=()=>{const last=state.history.pop();if(!last)return start();if(last.type==='q'){delete state.answers[last.id];return renderNext()}if(last.type==='symptom'){state.symptom=null;state.answers={};return renderSymptoms()}return start()}
+function renderResult(){const r=state.diagnosis;progress(5,5);screen.innerHTML=`<div class="kicker">${esc(r.business)} · 先验证</div><div class="card"><div class="label">最值得先解决</div><div class="title">${esc(r.problem)}</div><p class="reason">${esc(r.reason)}</p><div class="chips"><span class="chip">依据：${esc(r.evidence.level)}</span></div><div class="tags"><div class="tag">先做：${esc(r.first)}</div><div class="tag gray">再做：${esc(r.second)}</div><div class="tag warn">暂缓：${esc(r.pause)}</div></div></div><div class="actions"><button class="primary" onclick="observe()">开始7天观察</button><button class="secondary" onclick="start()">重新体检</button></div><div class="note">行业不同，观察指标也不同。</div>`}
+function rows(){try{return JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){return[]}}function saveRows(x){localStorage.setItem(KEY,JSON.stringify(x))}
+window.observe=()=>{localStorage.removeItem(KEY);renderObserve()}
+function renderObserve(){const rs=rows(),day=Math.min(rs.length+1,7),fields=BossSkill.observeFields(state);progress(day,7);window._fields=fields;screen.innerHTML=`<button class="back" onclick="renderResult()">← 返回结果</button><div class="kicker">第 ${day} 天 · ${esc(BossSkill.BUSINESS[state.business].label)}</div><h1>今天记一下</h1><div class="fields">${fields.map(f=>`<div class="field"><label>${esc(f.label)}</label><input id="f_${f.id}" inputmode="${f.type==='number'?'decimal':'text'}"></div>`).join('')}</div><div class="actions"><button class="primary" onclick="saveDay()">${rs.length===6?'完成7天':'保存今天'}</button></div>${rs.length?`<div class="daybox">已记录 ${rs.length} 天</div>`:''}`}
+window.saveDay=()=>{const vals={};_fields.forEach(f=>vals[f.id]=document.getElementById('f_'+f.id).value.trim());if(Object.values(vals).every(v=>!v))return;const rs=rows();rs.push({date:new Date().toISOString(),values:vals});saveRows(rs);rs.length>=7?renderSummary():renderObserve()}
+function renderSummary(){const s=BossSkill.summarize(state,rows());progress(7,7);screen.innerHTML=`<div class="kicker">7天完成</div><div class="card"><div class="label">现在有证据了</div><div class="title">${esc(s.signal)}</div><div class="summary">${s.lines.map(x=>`<div>${esc(x)}</div>`).join('')}</div><div class="experiment"><b>下一步只盯</b><p>${esc(s.metric)}</p></div></div><div class="actions"><button class="primary" onclick="review()">做30天小实验</button><button class="secondary" onclick="start()">重新体检</button></div>`}
+window.review=()=>{const r=state.diagnosis;screen.innerHTML=`<div class="kicker">FDE · 30天</div><h1>只改一个点</h1><div class="card"><div class="label">${esc(r.business)}</div><div class="title">${esc(r.problem)}</div><div class="experiment"><b>30天实验</b><p>${esc(r.experiment)}</p></div><div class="tags"><div class="tag">盯住：${esc(r.metric)}</div><div class="tag gray">每7天复盘</div><div class="tag warn">30天后再决定要不要做工具</div></div></div>`}
+start();
+</script>
+</body></html>
