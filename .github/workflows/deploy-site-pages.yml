@@ -1,0 +1,66 @@
+name: Deploy AI Ask Know Site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Prepare complete public site
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf _site
+          mkdir -p _site
+
+          rsync -a \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='_site' \
+            --exclude='README.md' \
+            ./ _site/
+
+          # Rebuild ONE-01 from source parts when present, preserving existing lab behavior.
+          PARTS=_site/labs/one01/source
+          OUT=_site/labs/one01/index.html
+          if [ -d "$PARTS" ] && [ -f "$PARTS/000.part" ] && [ -f "$PARTS/006.part" ]; then
+            cat "$PARTS/000.part" "$PARTS/001.part" "$PARTS/002.part" "$PARTS/003.part" "$PARTS/004.part" "$PARTS/005.part" "$PARTS/006.part" > "$OUT"
+            rm -rf "$PARTS"
+          fi
+
+          test -f _site/index.html
+          test -f _site/style.css
+          grep -q 'AI Ask Know｜BW AI Product Lab' _site/index.html
+          grep -q 'AI Ask Know V2' _site/style.css
+          touch _site/.nojekyll
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
